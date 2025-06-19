@@ -5,12 +5,12 @@ import DashboardStats from "@/components/DashboardStats";
 import FilterBar from "@/components/FilterBar";
 import BountyCard from "@/components/BountyCard";
 import CreateBountyForm from "@/components/CreateBountyForm";
+import Navigation from "@/components/Navigation";
+import HeroSection from "@/components/HeroSection";
 import { Button } from "@/components/ui/button";
-import { Plus, Grid, List, TrendingUp } from "lucide-react";
 
 const Index = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
-  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Sample bounty data - in a real app this would come from your smart contract
   const bounties = [
@@ -97,7 +97,7 @@ const Index = () => {
             <Button 
               variant="outline" 
               onClick={() => setShowCreateForm(false)}
-              className="mb-4 border-purple-500 text-black hover:bg-purple-600 hover:text-white bg-white"
+              className="mb-4 border-purple-500 text-white hover:bg-purple-600 hover:text-white bg-gray-800/60 shadow-[0_0_10px_rgba(147,51,234,0.4)]"
             >
               ← Back to Dashboard
             </Button>
@@ -112,77 +112,11 @@ const Index = () => {
     <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <Header />
       
-      {/* Sidebar Navigation */}
       <div className="flex">
-        <aside className="w-64 min-h-screen bg-gray-800/50 backdrop-blur-lg border-r border-gray-700 p-6">
-          <div className="space-y-6">
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
-              <div className="space-y-3">
-                <Button 
-                  className="w-full justify-start bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-black"
-                  onClick={() => setShowCreateForm(true)}
-                >
-                  <Plus className="h-4 w-4 mr-2" />
-                  Create Bounty
-                </Button>
-                <Button variant="outline" className="w-full justify-start border-gray-600 text-black hover:bg-gray-700 hover:text-white bg-white">
-                  <TrendingUp className="h-4 w-4 mr-2" />
-                  Analytics
-                </Button>
-              </div>
-            </div>
-            
-            <div>
-              <h3 className="text-lg font-semibold text-white mb-4">View Options</h3>
-              <div className="flex space-x-2">
-                <Button
-                  variant={viewMode === 'grid' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setViewMode('grid')}
-                  className={viewMode === 'grid' 
-                    ? "bg-purple-600 text-white" 
-                    : "border-gray-600 text-black hover:bg-gray-700 hover:text-white bg-white"
-                  }
-                >
-                  <Grid className="h-4 w-4" />
-                </Button>
-                <Button
-                  variant={viewMode === 'list' ? 'default' : 'outline'}
-                  size="sm"
-                  onClick={() => setViewMode('list')}
-                  className={viewMode === 'list' 
-                    ? "bg-purple-600 text-white" 
-                    : "border-gray-600 text-black hover:bg-gray-700 hover:text-white bg-white"
-                  }
-                >
-                  <List className="h-4 w-4" />
-                </Button>
-              </div>
-            </div>
-          </div>
-        </aside>
+        <Navigation onCreateBounty={() => setShowCreateForm(true)} />
 
         <main className="flex-1 px-8 py-8">
-          {/* Hero Section - Redesigned */}
-          <div className="mb-12 text-left">
-            <div className="flex items-center justify-between mb-8">
-              <div>
-                <h1 className="text-5xl font-bold text-white mb-4">
-                  Welcome to
-                  <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"> BountyChain</span>
-                </h1>
-                <p className="text-lg text-gray-300 max-w-2xl">
-                  The premier decentralized platform for connecting talent with opportunities. Create, discover, and complete bounties in the Web3 ecosystem.
-                </p>
-              </div>
-              <div className="hidden lg:block">
-                <div className="w-32 h-32 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
-                  <span className="text-2xl font-bold text-white">BC</span>
-                </div>
-              </div>
-            </div>
-          </div>
+          <HeroSection />
 
           {/* Dashboard Stats - Horizontal Layout */}
           <div className="mb-8">
@@ -192,8 +126,12 @@ const Index = () => {
           {/* Filter Section */}
           <div className="mb-8">
             <div className="flex items-center justify-between mb-4">
-              <h2 className="text-2xl font-bold text-white">Active Bounties</h2>
-              <Button variant="outline" size="sm" className="border-gray-600 text-black hover:bg-gray-700 hover:text-white bg-white">
+              <h2 className="text-2xl font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">Active Bounties</h2>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                className="border-gray-600 text-white hover:bg-gray-700 hover:text-white bg-gray-800/60 shadow-[0_0_8px_rgba(34,197,94,0.4)] hover:shadow-[0_0_12px_rgba(34,197,94,0.6)]"
+              >
                 View All Categories
               </Button>
             </div>
@@ -202,21 +140,11 @@ const Index = () => {
 
           {/* Bounties Section */}
           <div className="space-y-8">
-            {viewMode === 'grid' ? (
-              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
-                {bounties.map((bounty) => (
-                  <BountyCard key={bounty.id} {...bounty} />
-                ))}
-              </div>
-            ) : (
-              <div className="space-y-4">
-                {bounties.map((bounty) => (
-                  <div key={bounty.id} className="w-full">
-                    <BountyCard {...bounty} />
-                  </div>
-                ))}
-              </div>
-            )}
+            <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+              {bounties.map((bounty) => (
+                <BountyCard key={bounty.id} {...bounty} />
+              ))}
+            </div>
           </div>
 
           {/* Load More Section */}
@@ -224,7 +152,7 @@ const Index = () => {
             <Button 
               variant="outline" 
               size="lg" 
-              className="border-purple-500 text-black hover:bg-purple-600 hover:text-white bg-white px-8"
+              className="border-purple-500 text-white hover:bg-purple-600 hover:text-white bg-gray-800/60 px-8 shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:shadow-[0_0_20px_rgba(147,51,234,0.8)]"
             >
               Load More Bounties
             </Button>
