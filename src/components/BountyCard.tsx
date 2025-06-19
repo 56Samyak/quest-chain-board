@@ -30,43 +30,43 @@ const BountyCard = ({
 }: BountyCardProps) => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "Easy": return "bg-green-100 text-green-800";
-      case "Medium": return "bg-yellow-100 text-yellow-800";
-      case "Hard": return "bg-red-100 text-red-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "Easy": return "bg-green-900 text-green-300 border-green-700";
+      case "Medium": return "bg-yellow-900 text-yellow-300 border-yellow-700";
+      case "Hard": return "bg-red-900 text-red-300 border-red-700";
+      default: return "bg-gray-800 text-gray-300 border-gray-700";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Open": return "bg-blue-100 text-blue-800";
-      case "In Progress": return "bg-orange-100 text-orange-800";
-      case "Completed": return "bg-green-100 text-green-800";
-      default: return "bg-gray-100 text-gray-800";
+      case "Open": return "bg-blue-900 text-blue-300 border-blue-700";
+      case "In Progress": return "bg-orange-900 text-orange-300 border-orange-700";
+      case "Completed": return "bg-green-900 text-green-300 border-green-700";
+      default: return "bg-gray-800 text-gray-300 border-gray-700";
     }
   };
 
   return (
-    <Card className="hover:shadow-lg transition-all duration-300 hover:-translate-y-1 animate-fade-in">
+    <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-fade-in bg-gray-800 border-gray-700">
       <CardHeader className="pb-3">
         <div className="flex justify-between items-start">
           <div className="flex space-x-2">
             <Badge className={getDifficultyColor(difficulty)}>
               {difficulty}
             </Badge>
-            <Badge variant="secondary">{category}</Badge>
+            <Badge variant="secondary" className="bg-gray-700 text-gray-300 border-gray-600">{category}</Badge>
           </div>
           <Badge className={getStatusColor(status)}>
             {status}
           </Badge>
         </div>
-        <h3 className="text-lg font-semibold text-gray-900 line-clamp-2">{title}</h3>
+        <h3 className="text-lg font-semibold text-white line-clamp-2">{title}</h3>
       </CardHeader>
       
       <CardContent className="pb-4">
-        <p className="text-gray-600 text-sm mb-4 line-clamp-3">{description}</p>
+        <p className="text-gray-300 text-sm mb-4 line-clamp-3">{description}</p>
         
-        <div className="flex items-center justify-between text-sm text-gray-500">
+        <div className="flex items-center justify-between text-sm text-gray-400">
           <div className="flex items-center space-x-1">
             <User className="h-4 w-4" />
             <span>{poster}</span>
@@ -81,13 +81,13 @@ const BountyCard = ({
       <CardFooter className="pt-0">
         <div className="flex justify-between items-center w-full">
           <div className="flex items-center space-x-1">
-            <DollarSign className="h-5 w-5 text-green-600" />
-            <span className="text-xl font-bold text-green-600">{reward}</span>
-            <span className="text-sm text-gray-500">{currency}</span>
+            <DollarSign className="h-5 w-5 text-green-400" />
+            <span className="text-xl font-bold text-green-400">{reward}</span>
+            <span className="text-sm text-gray-400">{currency}</span>
           </div>
           
           <Button 
-            className="bg-gradient-primary hover:opacity-90 transition-opacity"
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
             disabled={status !== "Open"}
           >
             {status === "Open" ? "Claim Bounty" : "View Details"}

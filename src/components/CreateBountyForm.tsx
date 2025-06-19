@@ -7,8 +7,10 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { Calendar, DollarSign } from "lucide-react";
+import { useToast } from "@/hooks/use-toast";
 
 const CreateBountyForm = () => {
+  const { toast } = useToast();
   const [formData, setFormData] = useState({
     title: "",
     description: "", 
@@ -21,68 +23,102 @@ const CreateBountyForm = () => {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
+    
+    // Validate required fields
+    if (!formData.title || !formData.description || !formData.category || !formData.difficulty || !formData.reward || !formData.deadline) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive"
+      });
+      return;
+    }
+
     console.log("Creating bounty:", formData);
-    // Here you would integrate with your smart contract
+    
+    toast({
+      title: "Success!",
+      description: "Bounty created successfully",
+    });
+
+    // Reset form
+    setFormData({
+      title: "",
+      description: "", 
+      category: "",
+      difficulty: "",
+      reward: "",
+      currency: "ETH",
+      deadline: ""
+    });
+  };
+
+  const handleInputChange = (field: string, value: string) => {
+    setFormData(prev => ({
+      ...prev,
+      [field]: value
+    }));
   };
 
   return (
-    <Card className="max-w-2xl mx-auto">
+    <Card className="max-w-2xl mx-auto bg-gray-900 border-gray-700">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center">Create New Bounty</CardTitle>
+        <CardTitle className="text-2xl font-bold text-center text-white">Create New Bounty</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
           <div>
-            <Label htmlFor="title">Bounty Title</Label>
+            <Label htmlFor="title" className="text-gray-300">Bounty Title</Label>
             <Input
               id="title"
               placeholder="e.g., Fix responsive design bug on mobile"
               value={formData.title}
-              onChange={(e) => setFormData({...formData, title: e.target.value})}
+              onChange={(e) => handleInputChange('title', e.target.value)}
+              className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
               required
             />
           </div>
           
           <div>
-            <Label htmlFor="description">Description</Label>
+            <Label htmlFor="description" className="text-gray-300">Description</Label>
             <Textarea
               id="description"
               placeholder="Describe the task, requirements, and deliverables..."
-              className="h-32"
+              className="h-32 bg-gray-800 border-gray-600 text-white placeholder-gray-400"
               value={formData.description}
-              onChange={(e) => setFormData({...formData, description: e.target.value})}
+              onChange={(e) => handleInputChange('description', e.target.value)}
               required
             />
           </div>
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label>Category</Label>
-              <Select onValueChange={(value) => setFormData({...formData, category: value})}>
-                <SelectTrigger>
+              <Label className="text-gray-300">Category</Label>
+              <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
+                <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="web-dev">Web Development</SelectItem>
-                  <SelectItem value="mobile">Mobile App</SelectItem>
-                  <SelectItem value="blockchain">Blockchain</SelectItem>
-                  <SelectItem value="ai-ml">AI/ML</SelectItem>
-                  <SelectItem value="design">Design</SelectItem>
-                  <SelectItem value="security">Security</SelectItem>
+                <SelectContent className="bg-gray-800 border-gray-600">
+                  <SelectItem value="web-dev" className="text-white">Web Development</SelectItem>
+                  <SelectItem value="mobile" className="text-white">Mobile App</SelectItem>
+                  <SelectItem value="blockchain" className="text-white">Blockchain</SelectItem>
+                  <SelectItem value="ai-ml" className="text-white">AI/ML</SelectItem>
+                  <SelectItem value="design" className="text-white">Design</SelectItem>
+                  <SelectItem value="security" className="text-white">Security</SelectItem>
                 </SelectContent>
               </Select>
             </div>
             
             <div>
-              <Label>Difficulty Level</Label>
-              <Select onValueChange={(value) => setFormData({...formData, difficulty: value})}>
-                <SelectTrigger>
+              <Label className="text-gray-300">Difficulty Level</Label>
+              <Select value={formData.difficulty} onValueChange={(value) => handleInputChange('difficulty', value)}>
+                <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
                   <SelectValue placeholder="Select difficulty" />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="easy">Easy</SelectItem>
-                  <SelectItem value="medium">Medium</SelectItem>
-                  <SelectItem value="hard">Hard</SelectItem>
+                <SelectContent className="bg-gray-800 border-gray-600">
+                  <SelectItem value="easy" className="text-white">Easy</SelectItem>
+                  <SelectItem value="medium" className="text-white">Medium</SelectItem>
+                  <SelectItem value="hard" className="text-white">Hard</SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -90,53 +126,54 @@ const CreateBountyForm = () => {
           
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <Label htmlFor="reward">Reward Amount</Label>
+              <Label htmlFor="reward" className="text-gray-300">Reward Amount</Label>
               <div className="relative">
                 <DollarSign className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
                   id="reward"
                   type="number"
+                  step="0.01"
                   placeholder="0.5"
-                  className="pl-10"
+                  className="pl-10 bg-gray-800 border-gray-600 text-white placeholder-gray-400"
                   value={formData.reward}
-                  onChange={(e) => setFormData({...formData, reward: e.target.value})}
+                  onChange={(e) => handleInputChange('reward', e.target.value)}
                   required
                 />
               </div>
             </div>
             
             <div>
-              <Label>Currency</Label>
-              <Select value={formData.currency} onValueChange={(value) => setFormData({...formData, currency: value})}>
-                <SelectTrigger>
+              <Label className="text-gray-300">Currency</Label>
+              <Select value={formData.currency} onValueChange={(value) => handleInputChange('currency', value)}>
+                <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
                   <SelectValue />
                 </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="ETH">ETH</SelectItem>
-                  <SelectItem value="BTC">BTC</SelectItem>
-                  <SelectItem value="USDC">USDC</SelectItem>
-                  <SelectItem value="DAI">DAI</SelectItem>
+                <SelectContent className="bg-gray-800 border-gray-600">
+                  <SelectItem value="ETH" className="text-white">ETH</SelectItem>
+                  <SelectItem value="BTC" className="text-white">BTC</SelectItem>
+                  <SelectItem value="USDC" className="text-white">USDC</SelectItem>
+                  <SelectItem value="DAI" className="text-white">DAI</SelectItem>
                 </SelectContent>
               </Select>
             </div>
           </div>
           
           <div>
-            <Label htmlFor="deadline">Deadline</Label>
+            <Label htmlFor="deadline" className="text-gray-300">Deadline</Label>
             <div className="relative">
               <Calendar className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
               <Input
                 id="deadline"
                 type="date"
-                className="pl-10"
+                className="pl-10 bg-gray-800 border-gray-600 text-white"
                 value={formData.deadline}
-                onChange={(e) => setFormData({...formData, deadline: e.target.value})}
+                onChange={(e) => handleInputChange('deadline', e.target.value)}
                 required
               />
             </div>
           </div>
           
-          <Button type="submit" className="w-full bg-gradient-primary hover:opacity-90 transition-opacity">
+          <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white">
             Create Bounty
           </Button>
         </form>

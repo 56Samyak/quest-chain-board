@@ -89,14 +89,14 @@ const Index = () => {
 
   if (showCreateForm) {
     return (
-      <div className="min-h-screen bg-gray-50">
+      <div className="min-h-screen bg-gray-900">
         <Header />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">
             <Button 
               variant="outline" 
               onClick={() => setShowCreateForm(false)}
-              className="mb-4"
+              className="mb-4 border-gray-600 text-gray-300 hover:bg-gray-800"
             >
               ← Back to Dashboard
             </Button>
@@ -108,30 +108,30 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gray-900">
       <Header />
       
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         {/* Hero Section */}
         <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-gray-900 mb-4">
+          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
             Decentralized
-            <span className="bg-gradient-primary bg-clip-text text-transparent"> Bounty </span>
+            <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"> Bounty </span>
             Board
           </h1>
-          <p className="text-xl text-gray-600 mb-8 max-w-3xl mx-auto">
+          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
             Connect with talented developers, designers, and creators. Post bounties for your projects or claim existing ones to earn cryptocurrency rewards.
           </p>
           <div className="flex justify-center space-x-4">
             <Button 
               size="lg" 
-              className="bg-gradient-primary hover:opacity-90 transition-opacity"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
               onClick={() => setShowCreateForm(true)}
             >
               <Plus className="h-5 w-5 mr-2" />
               Create Bounty
             </Button>
-            <Button size="lg" variant="outline">
+            <Button size="lg" variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
               Browse Bounties
             </Button>
           </div>
@@ -152,7 +152,7 @@ const Index = () => {
 
         {/* Load More Button */}
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg">
+          <Button variant="outline" size="lg" className="border-gray-600 text-gray-300 hover:bg-gray-800">
             Load More Bounties
           </Button>
         </div>
