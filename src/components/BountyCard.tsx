@@ -2,7 +2,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, DollarSign, User, Star } from "lucide-react";
+import { Clock, DollarSign, User, Star, Eye } from "lucide-react";
 
 interface BountyCardProps {
   id: string;
@@ -30,68 +30,84 @@ const BountyCard = ({
 }: BountyCardProps) => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
-      case "Easy": return "bg-green-900 text-green-300 border-green-700";
-      case "Medium": return "bg-yellow-900 text-yellow-300 border-yellow-700";
-      case "Hard": return "bg-red-900 text-red-300 border-red-700";
-      default: return "bg-gray-800 text-gray-300 border-gray-700";
+      case "Easy": return "bg-green-500/20 text-green-300 border-green-500/30";
+      case "Medium": return "bg-yellow-500/20 text-yellow-300 border-yellow-500/30";
+      case "Hard": return "bg-red-500/20 text-red-300 border-red-500/30";
+      default: return "bg-gray-500/20 text-gray-300 border-gray-500/30";
     }
   };
 
   const getStatusColor = (status: string) => {
     switch (status) {
-      case "Open": return "bg-blue-900 text-blue-300 border-blue-700";
-      case "In Progress": return "bg-orange-900 text-orange-300 border-orange-700";
-      case "Completed": return "bg-green-900 text-green-300 border-green-700";
-      default: return "bg-gray-800 text-gray-300 border-gray-700";
+      case "Open": return "bg-blue-500/20 text-blue-300 border-blue-500/30";
+      case "In Progress": return "bg-orange-500/20 text-orange-300 border-orange-500/30";
+      case "Completed": return "bg-green-500/20 text-green-300 border-green-500/30";
+      default: return "bg-gray-500/20 text-gray-300 border-gray-500/30";
     }
   };
 
   return (
-    <Card className="hover:shadow-xl transition-all duration-300 hover:-translate-y-1 animate-fade-in bg-gray-800 border-gray-700">
-      <CardHeader className="pb-3">
-        <div className="flex justify-between items-start">
-          <div className="flex space-x-2">
-            <Badge className={getDifficultyColor(difficulty)}>
+    <Card className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-fade-in bg-gray-800/40 backdrop-blur-lg border-gray-700/50 hover:border-purple-500/50 relative overflow-hidden">
+      {/* Gradient Overlay */}
+      <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
+      
+      <CardHeader className="pb-3 relative z-10">
+        <div className="flex justify-between items-start mb-3">
+          <div className="flex flex-wrap gap-2">
+            <Badge className={`${getDifficultyColor(difficulty)} border font-medium`}>
               {difficulty}
             </Badge>
-            <Badge variant="secondary" className="bg-gray-700 text-gray-300 border-gray-600">{category}</Badge>
+            <Badge variant="secondary" className="bg-gray-700/50 text-gray-300 border-gray-600/50">
+              {category}
+            </Badge>
           </div>
-          <Badge className={getStatusColor(status)}>
+          <Badge className={`${getStatusColor(status)} border font-medium`}>
             {status}
           </Badge>
         </div>
-        <h3 className="text-lg font-semibold text-white line-clamp-2">{title}</h3>
+        <h3 className="text-xl font-bold text-white line-clamp-2 group-hover:text-purple-300 transition-colors">
+          {title}
+        </h3>
       </CardHeader>
       
-      <CardContent className="pb-4">
-        <p className="text-gray-300 text-sm mb-4 line-clamp-3">{description}</p>
+      <CardContent className="pb-4 relative z-10">
+        <p className="text-gray-300 text-sm mb-6 line-clamp-3 leading-relaxed">{description}</p>
         
-        <div className="flex items-center justify-between text-sm text-gray-400">
-          <div className="flex items-center space-x-1">
-            <User className="h-4 w-4" />
-            <span>{poster}</span>
+        <div className="grid grid-cols-2 gap-4 text-sm">
+          <div className="flex items-center space-x-2 text-gray-400">
+            <User className="h-4 w-4 text-purple-400" />
+            <span className="truncate">{poster}</span>
           </div>
-          <div className="flex items-center space-x-1">
-            <Clock className="h-4 w-4" />
+          <div className="flex items-center space-x-2 text-gray-400">
+            <Clock className="h-4 w-4 text-blue-400" />
             <span>{timeLeft}</span>
           </div>
         </div>
       </CardContent>
       
-      <CardFooter className="pt-0">
+      <CardFooter className="pt-0 relative z-10">
         <div className="flex justify-between items-center w-full">
-          <div className="flex items-center space-x-1">
-            <DollarSign className="h-5 w-5 text-green-400" />
-            <span className="text-xl font-bold text-green-400">{reward}</span>
-            <span className="text-sm text-gray-400">{currency}</span>
+          <div className="flex items-center space-x-2">
+            <DollarSign className="h-6 w-6 text-green-400" />
+            <span className="text-2xl font-bold text-green-400">{reward}</span>
+            <span className="text-sm text-gray-400 font-medium">{currency}</span>
           </div>
           
-          <Button 
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-black"
-            disabled={status !== "Open"}
-          >
-            {status === "Open" ? "Claim Bounty" : "View Details"}
-          </Button>
+          <div className="flex space-x-2">
+            <Button 
+              variant="outline"
+              size="sm"
+              className="border-gray-600 text-black hover:bg-gray-700 hover:text-white bg-white"
+            >
+              <Eye className="h-4 w-4" />
+            </Button>
+            <Button 
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-black font-medium"
+              disabled={status !== "Open"}
+            >
+              {status === "Open" ? "Claim" : "View"}
+            </Button>
+          </div>
         </div>
       </CardFooter>
     </Card>

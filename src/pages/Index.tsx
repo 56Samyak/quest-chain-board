@@ -6,10 +6,11 @@ import FilterBar from "@/components/FilterBar";
 import BountyCard from "@/components/BountyCard";
 import CreateBountyForm from "@/components/CreateBountyForm";
 import { Button } from "@/components/ui/button";
-import { Plus } from "lucide-react";
+import { Plus, Grid, List, TrendingUp } from "lucide-react";
 
 const Index = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [viewMode, setViewMode] = useState<'grid' | 'list'>('grid');
 
   // Sample bounty data - in a real app this would come from your smart contract
   const bounties = [
@@ -89,14 +90,14 @@ const Index = () => {
 
   if (showCreateForm) {
     return (
-      <div className="min-h-screen bg-gray-900">
+      <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
         <Header />
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
           <div className="mb-6">
             <Button 
               variant="outline" 
               onClick={() => setShowCreateForm(false)}
-              className="mb-4 border-gray-600 text-black hover:bg-gray-800 hover:text-black bg-white"
+              className="mb-4 border-purple-500 text-black hover:bg-purple-600 hover:text-white bg-white"
             >
               ← Back to Dashboard
             </Button>
@@ -108,55 +109,128 @@ const Index = () => {
   }
 
   return (
-    <div className="min-h-screen bg-gray-900">
+    <div className="min-h-screen bg-gradient-to-br from-gray-900 via-gray-800 to-black">
       <Header />
       
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        {/* Hero Section */}
-        <div className="text-center mb-12">
-          <h1 className="text-4xl md:text-6xl font-bold text-white mb-4">
-            Decentralized
-            <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"> Bounty </span>
-            Board
-          </h1>
-          <p className="text-xl text-gray-300 mb-8 max-w-3xl mx-auto">
-            Connect with talented developers, designers, and creators. Post bounties for your projects or claim existing ones to earn cryptocurrency rewards.
-          </p>
-          <div className="flex justify-center space-x-4">
+      {/* Sidebar Navigation */}
+      <div className="flex">
+        <aside className="w-64 min-h-screen bg-gray-800/50 backdrop-blur-lg border-r border-gray-700 p-6">
+          <div className="space-y-6">
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4">Quick Actions</h3>
+              <div className="space-y-3">
+                <Button 
+                  className="w-full justify-start bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-black"
+                  onClick={() => setShowCreateForm(true)}
+                >
+                  <Plus className="h-4 w-4 mr-2" />
+                  Create Bounty
+                </Button>
+                <Button variant="outline" className="w-full justify-start border-gray-600 text-black hover:bg-gray-700 hover:text-white bg-white">
+                  <TrendingUp className="h-4 w-4 mr-2" />
+                  Analytics
+                </Button>
+              </div>
+            </div>
+            
+            <div>
+              <h3 className="text-lg font-semibold text-white mb-4">View Options</h3>
+              <div className="flex space-x-2">
+                <Button
+                  variant={viewMode === 'grid' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('grid')}
+                  className={viewMode === 'grid' 
+                    ? "bg-purple-600 text-white" 
+                    : "border-gray-600 text-black hover:bg-gray-700 hover:text-white bg-white"
+                  }
+                >
+                  <Grid className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant={viewMode === 'list' ? 'default' : 'outline'}
+                  size="sm"
+                  onClick={() => setViewMode('list')}
+                  className={viewMode === 'list' 
+                    ? "bg-purple-600 text-white" 
+                    : "border-gray-600 text-black hover:bg-gray-700 hover:text-white bg-white"
+                  }
+                >
+                  <List className="h-4 w-4" />
+                </Button>
+              </div>
+            </div>
+          </div>
+        </aside>
+
+        <main className="flex-1 px-8 py-8">
+          {/* Hero Section - Redesigned */}
+          <div className="mb-12 text-left">
+            <div className="flex items-center justify-between mb-8">
+              <div>
+                <h1 className="text-5xl font-bold text-white mb-4">
+                  Welcome to
+                  <span className="bg-gradient-to-r from-purple-400 to-blue-400 bg-clip-text text-transparent"> BountyChain</span>
+                </h1>
+                <p className="text-lg text-gray-300 max-w-2xl">
+                  The premier decentralized platform for connecting talent with opportunities. Create, discover, and complete bounties in the Web3 ecosystem.
+                </p>
+              </div>
+              <div className="hidden lg:block">
+                <div className="w-32 h-32 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center">
+                  <span className="text-2xl font-bold text-white">BC</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          {/* Dashboard Stats - Horizontal Layout */}
+          <div className="mb-8">
+            <DashboardStats />
+          </div>
+
+          {/* Filter Section */}
+          <div className="mb-8">
+            <div className="flex items-center justify-between mb-4">
+              <h2 className="text-2xl font-bold text-white">Active Bounties</h2>
+              <Button variant="outline" size="sm" className="border-gray-600 text-black hover:bg-gray-700 hover:text-white bg-white">
+                View All Categories
+              </Button>
+            </div>
+            <FilterBar />
+          </div>
+
+          {/* Bounties Section */}
+          <div className="space-y-8">
+            {viewMode === 'grid' ? (
+              <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
+                {bounties.map((bounty) => (
+                  <BountyCard key={bounty.id} {...bounty} />
+                ))}
+              </div>
+            ) : (
+              <div className="space-y-4">
+                {bounties.map((bounty) => (
+                  <div key={bounty.id} className="w-full">
+                    <BountyCard {...bounty} />
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Load More Section */}
+          <div className="flex justify-center mt-12">
             <Button 
+              variant="outline" 
               size="lg" 
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-black"
-              onClick={() => setShowCreateForm(true)}
+              className="border-purple-500 text-black hover:bg-purple-600 hover:text-white bg-white px-8"
             >
-              <Plus className="h-5 w-5 mr-2" />
-              Create Bounty
-            </Button>
-            <Button size="lg" variant="outline" className="border-gray-600 text-black hover:bg-gray-800 hover:text-black bg-white">
-              Browse Bounties
+              Load More Bounties
             </Button>
           </div>
-        </div>
-
-        {/* Dashboard Stats */}
-        <DashboardStats />
-
-        {/* Filter Bar */}
-        <FilterBar />
-
-        {/* Bounties Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {bounties.map((bounty) => (
-            <BountyCard key={bounty.id} {...bounty} />
-          ))}
-        </div>
-
-        {/* Load More Button */}
-        <div className="text-center mt-12">
-          <Button variant="outline" size="lg" className="border-gray-600 text-black hover:bg-gray-800 hover:text-black bg-white">
-            Load More Bounties
-          </Button>
-        </div>
-      </main>
+        </main>
+      </div>
     </div>
   );
 };
