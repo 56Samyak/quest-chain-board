@@ -31,12 +31,12 @@ const Header = () => {
           </nav>
 
           <div className="flex items-center space-x-4">
-            <Button variant="outline" size="sm" className="flex items-center space-x-2 border-gray-600 text-gray-300 hover:bg-gray-800">
+            <Button variant="outline" size="sm" className="flex items-center space-x-2 border-gray-600 text-black hover:bg-gray-800 hover:text-black bg-white">
               <Plus className="h-4 w-4" />
               <span>Create Bounty</span>
             </Button>
             
-            <Button variant="outline" size="sm" className="flex items-center space-x-2 border-gray-600 text-gray-300 hover:bg-gray-800">
+            <Button variant="outline" size="sm" className="flex items-center space-x-2 border-gray-600 text-black hover:bg-gray-800 hover:text-black bg-white">
               <Wallet className="h-4 w-4" />
               <span>Connect Wallet</span>
             </Button>

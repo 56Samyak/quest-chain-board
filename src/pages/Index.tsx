@@ -96,7 +96,7 @@ const Index = () => {
             <Button 
               variant="outline" 
               onClick={() => setShowCreateForm(false)}
-              className="mb-4 border-gray-600 text-gray-300 hover:bg-gray-800"
+              className="mb-4 border-gray-600 text-black hover:bg-gray-800 hover:text-black bg-white"
             >
               ← Back to Dashboard
             </Button>
@@ -125,13 +125,13 @@ const Index = () => {
           <div className="flex justify-center space-x-4">
             <Button 
               size="lg" 
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white"
+              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-black"
               onClick={() => setShowCreateForm(true)}
             >
               <Plus className="h-5 w-5 mr-2" />
               Create Bounty
             </Button>
-            <Button size="lg" variant="outline" className="border-gray-600 text-gray-300 hover:bg-gray-800">
+            <Button size="lg" variant="outline" className="border-gray-600 text-black hover:bg-gray-800 hover:text-black bg-white">
               Browse Bounties
             </Button>
           </div>
@@ -152,7 +152,7 @@ const Index = () => {
 
         {/* Load More Button */}
         <div className="text-center mt-12">
-          <Button variant="outline" size="lg" className="border-gray-600 text-gray-300 hover:bg-gray-800">
+          <Button variant="outline" size="lg" className="border-gray-600 text-black hover:bg-gray-800 hover:text-black bg-white">
             Load More Bounties
           </Button>
         </div>

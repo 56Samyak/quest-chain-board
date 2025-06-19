@@ -1,4 +1,3 @@
-
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -53,7 +52,7 @@ const FilterBar = () => {
             </SelectContent>
           </Select>
           
-          <Button variant="outline" size="default" className="border-gray-600 text-gray-300 hover:bg-gray-700">
+          <Button variant="outline" size="default" className="border-gray-600 text-black hover:bg-gray-700 hover:text-black bg-white">
             <Filter className="h-4 w-4 mr-2" />
             Filter
           </Button>
