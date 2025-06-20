@@ -1,3 +1,4 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -7,9 +8,17 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Label } from "@/components/ui/label";
 import { Calendar, DollarSign } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { useWeb3 } from "@/hooks/useWeb3";
+import { ContractService } from "@/services/contractService";
 
-const CreateBountyForm = () => {
+interface CreateBountyFormProps {
+  onBountyCreated?: () => void;
+}
+
+const CreateBountyForm = ({ onBountyCreated }: CreateBountyFormProps) => {
   const { toast } = useToast();
+  const { signer } = useWeb3();
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [formData, setFormData] = useState({
     title: "",
     description: "", 
@@ -20,7 +29,7 @@ const CreateBountyForm = () => {
     deadline: ""
   });
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
     // Validate required fields
@@ -33,23 +42,59 @@ const CreateBountyForm = () => {
       return;
     }
 
-    console.log("Creating bounty:", formData);
-    
-    toast({
-      title: "Success!",
-      description: "Bounty created successfully",
-    });
+    if (!signer) {
+      toast({
+        title: "Error",
+        description: "Please connect your wallet first",
+        variant: "destructive"
+      });
+      return;
+    }
 
-    // Reset form
-    setFormData({
-      title: "",
-      description: "", 
-      category: "",
-      difficulty: "",
-      reward: "",
-      currency: "ETH",
-      deadline: ""
-    });
+    setIsSubmitting(true);
+
+    try {
+      const contractService = new ContractService(signer);
+      const deadlineTimestamp = new Date(formData.deadline).getTime();
+      
+      await contractService.createBounty(
+        formData.title,
+        formData.description,
+        formData.reward,
+        deadlineTimestamp
+      );
+
+      toast({
+        title: "Success!",
+        description: "Bounty created successfully on the blockchain",
+      });
+
+      // Reset form
+      setFormData({
+        title: "",
+        description: "", 
+        category: "",
+        difficulty: "",
+        reward: "",
+        currency: "ETH",
+        deadline: ""
+      });
+
+      // Notify parent component to refresh bounties
+      if (onBountyCreated) {
+        onBountyCreated();
+      }
+
+    } catch (error) {
+      console.error('Error creating bounty:', error);
+      toast({
+        title: "Error",
+        description: "Failed to create bounty. Please try again.",
+        variant: "destructive"
+      });
+    } finally {
+      setIsSubmitting(false);
+    }
   };
 
   const handleInputChange = (field: string, value: string) => {
@@ -60,9 +105,9 @@ const CreateBountyForm = () => {
   };
 
   return (
-    <Card className="max-w-2xl mx-auto bg-gray-900 border-gray-700">
+    <Card className="max-w-2xl mx-auto bg-gray-900/80 border-gray-700/50 shadow-[0_0_20px_rgba(147,51,234,0.3)]">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold text-center text-white">Create New Bounty</CardTitle>
+        <CardTitle className="text-2xl font-bold text-center text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">Create New Bounty</CardTitle>
       </CardHeader>
       <CardContent>
         <form onSubmit={handleSubmit} className="space-y-6">
@@ -73,7 +118,7 @@ const CreateBountyForm = () => {
               placeholder="e.g., Fix responsive design bug on mobile"
               value={formData.title}
               onChange={(e) => handleInputChange('title', e.target.value)}
-              className="bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+              className="bg-gray-800/60 border-gray-600/50 text-white placeholder-gray-400 shadow-[0_0_8px_rgba(59,130,246,0.2)]"
               required
             />
           </div>
@@ -83,7 +128,7 @@ const CreateBountyForm = () => {
             <Textarea
               id="description"
               placeholder="Describe the task, requirements, and deliverables..."
-              className="h-32 bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+              className="h-32 bg-gray-800/60 border-gray-600/50 text-white placeholder-gray-400 shadow-[0_0_8px_rgba(59,130,246,0.2)]"
               value={formData.description}
               onChange={(e) => handleInputChange('description', e.target.value)}
               required
@@ -94,7 +139,7 @@ const CreateBountyForm = () => {
             <div>
               <Label className="text-gray-300">Category</Label>
               <Select value={formData.category} onValueChange={(value) => handleInputChange('category', value)}>
-                <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                <SelectTrigger className="bg-gray-800/60 border-gray-600/50 text-white shadow-[0_0_8px_rgba(59,130,246,0.2)]">
                   <SelectValue placeholder="Select category" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-600">
@@ -111,7 +156,7 @@ const CreateBountyForm = () => {
             <div>
               <Label className="text-gray-300">Difficulty Level</Label>
               <Select value={formData.difficulty} onValueChange={(value) => handleInputChange('difficulty', value)}>
-                <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                <SelectTrigger className="bg-gray-800/60 border-gray-600/50 text-white shadow-[0_0_8px_rgba(59,130,246,0.2)]">
                   <SelectValue placeholder="Select difficulty" />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-600">
@@ -133,7 +178,7 @@ const CreateBountyForm = () => {
                   type="number"
                   step="0.01"
                   placeholder="0.5"
-                  className="pl-10 bg-gray-800 border-gray-600 text-white placeholder-gray-400"
+                  className="pl-10 bg-gray-800/60 border-gray-600/50 text-white placeholder-gray-400 shadow-[0_0_8px_rgba(34,197,94,0.2)]"
                   value={formData.reward}
                   onChange={(e) => handleInputChange('reward', e.target.value)}
                   required
@@ -144,7 +189,7 @@ const CreateBountyForm = () => {
             <div>
               <Label className="text-gray-300">Currency</Label>
               <Select value={formData.currency} onValueChange={(value) => handleInputChange('currency', value)}>
-                <SelectTrigger className="bg-gray-800 border-gray-600 text-white">
+                <SelectTrigger className="bg-gray-800/60 border-gray-600/50 text-white shadow-[0_0_8px_rgba(59,130,246,0.2)]">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent className="bg-gray-800 border-gray-600">
@@ -164,7 +209,7 @@ const CreateBountyForm = () => {
               <Input
                 id="deadline"
                 type="date"
-                className="pl-10 bg-gray-800 border-gray-600 text-white"
+                className="pl-10 bg-gray-800/60 border-gray-600/50 text-white shadow-[0_0_8px_rgba(59,130,246,0.2)]"
                 value={formData.deadline}
                 onChange={(e) => handleInputChange('deadline', e.target.value)}
                 required
@@ -172,8 +217,12 @@ const CreateBountyForm = () => {
             </div>
           </div>
           
-          <Button type="submit" className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-black">
-            Create Bounty
+          <Button 
+            type="submit" 
+            disabled={isSubmitting}
+            className="w-full bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:shadow-[0_0_20px_rgba(147,51,234,0.7)]"
+          >
+            {isSubmitting ? "Creating Bounty..." : "Create Bounty"}
           </Button>
         </form>
       </CardContent>
