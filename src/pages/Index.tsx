@@ -65,7 +65,7 @@ const Index = () => {
               ← Back to Dashboard
             </Button>
           </div>
-          <CreateBountyForm onBountyCreated={loadBounties} />
+          <CreateBountyForm />
         </div>
       </div>
     );
@@ -105,10 +105,10 @@ const Index = () => {
                   reward={bounty.reward}
                   currency="ETH"
                   timeLeft={`${Math.max(0, Math.ceil((bounty.deadline - Date.now()) / (1000 * 60 * 60 * 24)))} days`}
-                  difficulty="Medium" as const
+                  difficulty="Medium"
                   category="Blockchain"
                   poster={`${bounty.poster.slice(0, 6)}...${bounty.poster.slice(-4)}`}
-                  status={bounty.isCompleted ? "Completed" : bounty.hunter !== "0x0000000000000000000000000000000000000000" ? "In Progress" : "Open"} as const
+                  status={bounty.isCompleted ? "Completed" : bounty.hunter !== "0x0000000000000000000000000000000000000000" ? "In Progress" : "Open"}
                   onRefresh={loadBounties}
                 />
               ))}

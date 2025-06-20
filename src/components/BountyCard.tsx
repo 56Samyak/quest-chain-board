@@ -2,7 +2,7 @@
 import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Clock, DollarSign, User, Eye } from "lucide-react";
+import { Clock, DollarSign, User } from "lucide-react";
 
 interface BountyCardProps {
   id: string;
@@ -15,6 +15,7 @@ interface BountyCardProps {
   category: string;
   poster: string;
   status: "Open" | "In Progress" | "Completed";
+  onRefresh?: () => void;
 }
 
 const BountyCard = ({
@@ -26,7 +27,8 @@ const BountyCard = ({
   difficulty,
   category,
   poster,
-  status
+  status,
+  onRefresh
 }: BountyCardProps) => {
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
@@ -48,7 +50,6 @@ const BountyCard = ({
 
   return (
     <Card className="group hover:shadow-2xl transition-all duration-500 hover:-translate-y-2 animate-fade-in bg-gray-800/40 backdrop-blur-lg border-gray-700/50 hover:border-purple-500/50 relative overflow-hidden shadow-[0_0_20px_rgba(75,85,99,0.3)] hover:shadow-[0_0_30px_rgba(147,51,234,0.4)]">
-      {/* Gradient Overlay */}
       <div className="absolute inset-0 bg-gradient-to-br from-purple-500/5 to-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity duration-500" />
       
       <CardHeader className="pb-3 relative z-10">
@@ -93,21 +94,13 @@ const BountyCard = ({
             <span className="text-sm text-gray-400 font-medium">{currency}</span>
           </div>
           
-          <div className="flex space-x-2">
-            <Button 
-              variant="outline"
-              size="sm"
-              className="border-gray-600 text-white hover:bg-gray-700 hover:text-white bg-gray-800/60 shadow-[0_0_6px_rgba(59,130,246,0.3)]"
-            >
-              <Eye className="h-4 w-4" />
-            </Button>
-            <Button 
-              className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium shadow-[0_0_12px_rgba(147,51,234,0.5)] hover:shadow-[0_0_16px_rgba(147,51,234,0.7)]"
-              disabled={status !== "Open"}
-            >
-              {status === "Open" ? "Claim" : "View"}
-            </Button>
-          </div>
+          <Button 
+            onClick={onRefresh}
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium shadow-[0_0_12px_rgba(147,51,234,0.5)] hover:shadow-[0_0_16px_rgba(147,51,234,0.7)]"
+            disabled={status !== "Open"}
+          >
+            {status === "Open" ? "Claim" : "View"}
+          </Button>
         </div>
       </CardFooter>
     </Card>
