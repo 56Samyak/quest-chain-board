@@ -1,5 +1,5 @@
 
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import Header from "@/components/Header";
 import DashboardStats from "@/components/DashboardStats";
 import FilterBar from "@/components/FilterBar";
@@ -8,85 +8,48 @@ import CreateBountyForm from "@/components/CreateBountyForm";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import { Button } from "@/components/ui/button";
+import { useWeb3 } from "@/hooks/useWeb3";
+import { ContractService } from "@/services/contractService";
+import { gsap } from "gsap";
+
+interface Bounty {
+  id: number;
+  title: string;
+  description: string;
+  reward: string;
+  poster: string;
+  hunter: string;
+  isCompleted: boolean;
+  isActive: boolean;
+  deadline: number;
+}
 
 const Index = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [bounties, setBounties] = useState<Bounty[]>([]);
+  const { signer } = useWeb3();
 
-  // Sample bounty data - in a real app this would come from your smart contract
-  const bounties = [
-    {
-      id: "1",
-      title: "Fix responsive design issues on DeFi dashboard",
-      description: "The dashboard doesn't work properly on mobile devices. Need to fix CSS and ensure proper responsive behavior across all screen sizes.",
-      reward: "0.5",
-      currency: "ETH",
-      timeLeft: "5 days",
-      difficulty: "Medium" as const,
-      category: "Web Development",
-      poster: "alice.eth",
-      status: "Open" as const
-    },
-    {
-      id: "2", 
-      title: "Smart contract security audit",
-      description: "Review and audit a DeFi lending protocol smart contract for potential vulnerabilities and gas optimizations.",
-      reward: "2.0",
-      currency: "ETH",
-      timeLeft: "12 days",
-      difficulty: "Hard" as const,
-      category: "Blockchain",
-      poster: "defi_dev.eth",
-      status: "Open" as const
-    },
-    {
-      id: "3",
-      title: "Create mobile app wireframes",
-      description: "Design wireframes for a crypto trading mobile app. Need clean, modern UI/UX design following mobile best practices.",
-      reward: "0.8",
-      currency: "ETH", 
-      timeLeft: "7 days",
-      difficulty: "Easy" as const,
-      category: "Design",
-      poster: "crypto_trader",
-      status: "In Progress" as const
-    },
-    {
-      id: "4",
-      title: "Implement NFT marketplace search feature",
-      description: "Add advanced search and filtering capabilities to an existing NFT marketplace. Must support metadata filtering and price ranges.",
-      reward: "1.2",
-      currency: "ETH",
-      timeLeft: "10 days", 
-      difficulty: "Medium" as const,
-      category: "Web Development",
-      poster: "nft_builder",
-      status: "Open" as const
-    },
-    {
-      id: "5",
-      title: "Bug fix: Transaction history not loading",
-      description: "Users report that transaction history page is not loading properly. Need to debug and fix the API integration issue.",
-      reward: "0.3",
-      currency: "ETH",
-      timeLeft: "3 days",
-      difficulty: "Easy" as const,
-      category: "Web Development", 
-      poster: "webapp_dev",
-      status: "Completed" as const
-    },
-    {
-      id: "6",
-      title: "AI-powered trading bot development",
-      description: "Create a trading bot that uses machine learning to analyze market trends and execute trades automatically on DEX platforms.",
-      reward: "5.0",
-      currency: "ETH",
-      timeLeft: "30 days",
-      difficulty: "Hard" as const,
-      category: "AI/ML",
-      poster: "quant_trader",
-      status: "Open" as const
+  useEffect(() => {
+    gsap.fromTo(".fade-in", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 });
+  }, []);
+
+  useEffect(() => {
+    if (signer) {
+      loadBounties();
     }
-  ];
+  }, [signer]);
+
+  const loadBounties = async () => {
+    if (signer) {
+      try {
+        const contractService = new ContractService(signer);
+        const contractBounties = await contractService.getAllBounties();
+        setBounties(contractBounties);
+      } catch (error) {
+        console.error('Error loading bounties:', error);
+      }
+    }
+  };
 
   if (showCreateForm) {
     return (
@@ -97,12 +60,12 @@ const Index = () => {
             <Button 
               variant="outline" 
               onClick={() => setShowCreateForm(false)}
-              className="mb-4 border-purple-500 text-white hover:bg-purple-600 hover:text-white bg-gray-800/60 shadow-[0_0_10px_rgba(147,51,234,0.4)]"
+              className="mb-4 border-purple-500 text-black hover:bg-purple-600 hover:text-white bg-gray-800/60 shadow-[0_0_10px_rgba(147,51,234,0.4)]"
             >
               ← Back to Dashboard
             </Button>
           </div>
-          <CreateBountyForm />
+          <CreateBountyForm onBountyCreated={loadBounties} />
         </div>
       </div>
     );
@@ -116,45 +79,50 @@ const Index = () => {
         <Navigation onCreateBounty={() => setShowCreateForm(true)} />
 
         <main className="flex-1 px-8 py-8">
-          <HeroSection />
+          <div className="fade-in">
+            <HeroSection />
+          </div>
 
-          {/* Dashboard Stats - Horizontal Layout */}
-          <div className="mb-8">
+          <div className="fade-in mb-8">
             <DashboardStats />
           </div>
 
-          {/* Filter Section */}
-          <div className="mb-8">
+          <div className="fade-in mb-8">
             <div className="flex items-center justify-between mb-4">
               <h2 className="text-2xl font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">Active Bounties</h2>
-              <Button 
-                variant="outline" 
-                size="sm" 
-                className="border-gray-600 text-white hover:bg-gray-700 hover:text-white bg-gray-800/60 shadow-[0_0_8px_rgba(34,197,94,0.4)] hover:shadow-[0_0_12px_rgba(34,197,94,0.6)]"
-              >
-                View All Categories
-              </Button>
             </div>
             <FilterBar />
           </div>
 
-          {/* Bounties Section */}
-          <div className="space-y-8">
+          <div className="fade-in space-y-8">
             <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
               {bounties.map((bounty) => (
-                <BountyCard key={bounty.id} {...bounty} />
+                <BountyCard 
+                  key={bounty.id} 
+                  id={bounty.id.toString()}
+                  title={bounty.title}
+                  description={bounty.description}
+                  reward={bounty.reward}
+                  currency="ETH"
+                  timeLeft={`${Math.max(0, Math.ceil((bounty.deadline - Date.now()) / (1000 * 60 * 60 * 24)))} days`}
+                  difficulty="Medium" as const
+                  category="Blockchain"
+                  poster={`${bounty.poster.slice(0, 6)}...${bounty.poster.slice(-4)}`}
+                  status={bounty.isCompleted ? "Completed" : bounty.hunter !== "0x0000000000000000000000000000000000000000" ? "In Progress" : "Open"} as const
+                  onRefresh={loadBounties}
+                />
               ))}
             </div>
           </div>
 
-          {/* Load More Section */}
-          <div className="flex justify-center mt-12">
+          <div className="fade-in flex justify-center mt-12">
             <Button 
               variant="outline" 
               size="lg" 
-              className="border-purple-500 text-white hover:bg-purple-600 hover:text-white bg-gray-800/60 px-8 shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:shadow-[0_0_20px_rgba(147,51,234,0.8)]"
+              onClick={loadBounties}
+              className="border-purple-500 text-black hover:bg-purple-600 hover:text-white bg-gray-800/60 px-8 shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:shadow-[0_0_20px_rgba(147,51,234,0.8)]"
             >
-              Load More Bounties
+              Refresh Bounties
             </Button>
           </div>
         </main>
