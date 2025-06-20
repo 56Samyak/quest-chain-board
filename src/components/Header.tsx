@@ -4,7 +4,7 @@ import { Wallet, Plus, Shield } from "lucide-react";
 import { useWeb3 } from "@/hooks/useWeb3";
 
 const Header = () => {
-  const { account, connectWallet } = useWeb3();
+  const { account, connectWallet, isConnecting } = useWeb3();
 
   return (
     <header className="bg-gray-900 border-b border-gray-700 shadow-lg">
@@ -33,24 +33,23 @@ const Header = () => {
             </a>
           </nav>
 
-          <div className="flex items-center space-x-4">
-            <Button 
-              variant="outline" 
-              size="sm" 
-              className="flex items-center space-x-2 border-gray-600 text-black hover:bg-gray-800 hover:text-white bg-gray-800/60 shadow-[0_0_8px_rgba(34,197,94,0.4)] hover:shadow-[0_0_12px_rgba(34,197,94,0.6)]"
-            >
-              <Plus className="h-4 w-4" />
-              <span>Create Bounty</span>
-            </Button>
-            
+          <div className="flex items-center space-x-4">            
             <Button 
               variant="outline" 
               size="sm" 
               onClick={connectWallet}
-              className="flex items-center space-x-2 border-gray-600 text-black hover:bg-gray-800 hover:text-white bg-gray-800/60 shadow-[0_0_8px_rgba(251,191,36,0.4)] hover:shadow-[0_0_12px_rgba(251,191,36,0.6)]"
+              disabled={isConnecting}
+              className="flex items-center space-x-2 border-gray-600 text-white hover:bg-gray-800 hover:text-white bg-gray-800/60 shadow-[0_0_8px_rgba(251,191,36,0.4)] hover:shadow-[0_0_12px_rgba(251,191,36,0.6)]"
             >
               <Wallet className="h-4 w-4" />
-              <span>{account ? `${account.slice(0, 6)}...${account.slice(-4)}` : 'Connect Wallet'}</span>
+              <span>
+                {isConnecting 
+                  ? 'Connecting...' 
+                  : account 
+                    ? `${account.slice(0, 6)}...${account.slice(-4)}` 
+                    : 'Connect Wallet'
+                }
+              </span>
             </Button>
           </div>
         </div>
