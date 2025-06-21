@@ -28,15 +28,17 @@ export const useWeb3 = () => {
       });
       
       console.log('Connected accounts:', accounts);
-      setAccount(accounts[0]);
-      
-      const web3Provider = new ethers.BrowserProvider(window.ethereum);
-      setProvider(web3Provider);
-      
-      const web3Signer = await web3Provider.getSigner();
-      setSigner(web3Signer);
-      
-      console.log('Wallet connected successfully');
+      if (accounts.length > 0) {
+        setAccount(accounts[0]);
+        
+        const web3Provider = new ethers.BrowserProvider(window.ethereum);
+        setProvider(web3Provider);
+        
+        const web3Signer = await web3Provider.getSigner();
+        setSigner(web3Signer);
+        
+        console.log('Wallet connected successfully');
+      }
     } catch (error) {
       console.error('Error connecting wallet:', error);
     } finally {
@@ -57,22 +59,24 @@ export const useWeb3 = () => {
   };
 
   const checkConnection = async () => {
-    if (window.ethereum) {
-      try {
-        const accounts = await window.ethereum.request({
-          method: 'eth_accounts',
-        });
-        
-        if (accounts.length > 0) {
-          setAccount(accounts[0]);
-          const web3Provider = new ethers.BrowserProvider(window.ethereum);
-          setProvider(web3Provider);
-          const web3Signer = await web3Provider.getSigner();
-          setSigner(web3Signer);
-        }
-      } catch (error) {
-        console.error('Error checking connection:', error);
+    if (!window.ethereum) {
+      return;
+    }
+    
+    try {
+      const accounts = await window.ethereum.request({
+        method: 'eth_accounts',
+      });
+      
+      if (accounts && accounts.length > 0) {
+        setAccount(accounts[0]);
+        const web3Provider = new ethers.BrowserProvider(window.ethereum);
+        setProvider(web3Provider);
+        const web3Signer = await web3Provider.getSigner();
+        setSigner(web3Signer);
       }
+    } catch (error) {
+      console.error('Error checking connection:', error);
     }
   };
 
@@ -80,21 +84,32 @@ export const useWeb3 = () => {
     checkConnection();
     
     if (window.ethereum) {
-      window.ethereum.on('accountsChanged', (accounts: string[]) => {
+      const handleAccountsChanged = (accounts: string[]) => {
         console.log('Account changed:', accounts);
-        setAccount(accounts[0] || '');
         if (accounts.length === 0) {
+          setAccount('');
           setProvider(null);
           setSigner(null);
         } else {
+          setAccount(accounts[0]);
           checkConnection();
         }
-      });
+      };
 
-      window.ethereum.on('chainChanged', () => {
+      const handleChainChanged = () => {
         console.log('Chain changed, reloading...');
         window.location.reload();
-      });
+      };
+
+      window.ethereum.on('accountsChanged', handleAccountsChanged);
+      window.ethereum.on('chainChanged', handleChainChanged);
+
+      return () => {
+        if (window.ethereum.removeListener) {
+          window.ethereum.removeListener('accountsChanged', handleAccountsChanged);
+          window.ethereum.removeListener('chainChanged', handleChainChanged);
+        }
+      };
     }
   }, []);
 

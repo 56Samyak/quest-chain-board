@@ -33,7 +33,11 @@ const Index = () => {
   const { signer, account } = useWeb3();
 
   useEffect(() => {
-    gsap.fromTo(".fade-in", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 });
+    try {
+      gsap.fromTo(".fade-in", { opacity: 0, y: 20 }, { opacity: 1, y: 0, duration: 0.8, stagger: 0.1 });
+    } catch (error) {
+      console.log('GSAP animation error:', error);
+    }
   }, []);
 
   useEffect(() => {
