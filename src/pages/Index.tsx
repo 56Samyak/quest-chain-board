@@ -156,7 +156,9 @@ const Index = () => {
                         timeLeft={`${Math.max(0, Math.ceil((bounty.deadline - Date.now()) / (1000 * 60 * 60 * 24)))} days`}
                         difficulty="Medium"
                         category="Blockchain"
-                        poster={`${bounty.poster.slice(0, 6)}...${bounty.poster.slice(-4)}`}
+                        poster={bounty.poster}
+                        hunter={bounty.hunter}
+                        deadline={bounty.deadline}
                         status={bounty.isCompleted ? "Completed" : bounty.hunter !== "0x0000000000000000000000000000000000000000" ? "In Progress" : "Open"}
                         onRefresh={loadBounties}
                       />

@@ -54,29 +54,58 @@ export class ContractService {
     }
   }
 
+  async getBountyCount() {
+    try {
+      const count = await this.contract.bountyCounter();
+      console.log('Total bounty count:', Number(count));
+      return Number(count);
+    } catch (error) {
+      console.error('Error getting bounty count:', error);
+      return 0;
+    }
+  }
+
   async getAllBounties() {
     try {
       console.log('Fetching all bounties...');
-      const bounties = await this.contract.getAllBounties();
-      console.log('Raw bounties from contract:', bounties);
       
-      const formattedBounties = bounties.map((bounty: any) => ({
-        id: Number(bounty.id),
-        title: bounty.title,
-        description: bounty.description,
-        reward: ethers.formatEther(bounty.reward),
-        poster: bounty.poster,
-        hunter: bounty.hunter,
-        isCompleted: bounty.isCompleted,
-        isActive: bounty.isActive,
-        deadline: Number(bounty.deadline)
-      }));
+      // First check if contract is deployed by getting bounty count
+      const bountyCount = await this.getBountyCount();
       
-      console.log('Formatted bounties:', formattedBounties);
-      return formattedBounties;
+      if (bountyCount === 0) {
+        console.log('No bounties created yet');
+        return [];
+      }
+
+      // Try to get individual bounties instead of using getAllBounties
+      const bounties = [];
+      for (let i = 1; i <= bountyCount; i++) {
+        try {
+          const bounty = await this.contract.bounties(i);
+          console.log(`Bounty ${i}:`, bounty);
+          
+          bounties.push({
+            id: Number(bounty.id),
+            title: bounty.title,
+            description: bounty.description,
+            reward: ethers.formatEther(bounty.reward),
+            poster: bounty.poster,
+            hunter: bounty.hunter,
+            isCompleted: bounty.isCompleted,
+            isActive: bounty.isActive,
+            deadline: Number(bounty.deadline)
+          });
+        } catch (bountyError) {
+          console.error(`Error fetching bounty ${i}:`, bountyError);
+        }
+      }
+      
+      console.log('Formatted bounties:', bounties);
+      return bounties;
     } catch (error) {
       console.error('Error fetching bounties:', error);
-      throw error;
+      // Return empty array instead of throwing to prevent UI crash
+      return [];
     }
   }
 }
