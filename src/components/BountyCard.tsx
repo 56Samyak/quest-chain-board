@@ -3,6 +3,8 @@ import { Card, CardContent, CardFooter, CardHeader } from "@/components/ui/card"
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Clock, DollarSign, User } from "lucide-react";
+import { useWeb3 } from "@/hooks/useWeb3";
+import { ContractService } from "@/services/contractService";
 
 interface BountyCardProps {
   id: string;
@@ -19,6 +21,7 @@ interface BountyCardProps {
 }
 
 const BountyCard = ({
+  id,
   title,
   description,
   reward,
@@ -30,6 +33,8 @@ const BountyCard = ({
   status,
   onRefresh
 }: BountyCardProps) => {
+  const { signer } = useWeb3();
+
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case "Easy": return "bg-green-500/20 text-green-300 border-green-500/30";
@@ -45,6 +50,28 @@ const BountyCard = ({
       case "In Progress": return "bg-orange-500/20 text-orange-300 border-orange-500/30";
       case "Completed": return "bg-green-500/20 text-green-300 border-green-500/30";
       default: return "bg-gray-500/20 text-gray-300 border-gray-500/30";
+    }
+  };
+
+  const handleClaimBounty = async () => {
+    if (!signer) {
+      alert('Please connect your wallet first');
+      return;
+    }
+
+    try {
+      console.log('Claiming bounty with ID:', id);
+      const contractService = new ContractService(signer);
+      const tx = await contractService.acceptBounty(Number(id));
+      console.log('Bounty claimed successfully:', tx);
+      
+      // Refresh the bounties list
+      if (onRefresh) {
+        await onRefresh();
+      }
+    } catch (error) {
+      console.error('Error claiming bounty:', error);
+      alert('Failed to claim bounty. Please try again.');
     }
   };
 
@@ -95,7 +122,7 @@ const BountyCard = ({
           </div>
           
           <Button 
-            onClick={onRefresh}
+            onClick={status === "Open" ? handleClaimBounty : undefined}
             className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium shadow-[0_0_12px_rgba(147,51,234,0.5)] hover:shadow-[0_0_16px_rgba(147,51,234,0.7)]"
             disabled={status !== "Open"}
           >

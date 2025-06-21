@@ -1,6 +1,6 @@
 
 import { Button } from "@/components/ui/button";
-import { Plus, TrendingUp } from "lucide-react";
+import { Plus } from "lucide-react";
 
 interface NavigationProps {
   onCreateBounty: () => void;
@@ -21,13 +21,6 @@ const Navigation = ({ onCreateBounty }: NavigationProps) => {
             >
               <Plus className="h-4 w-4 mr-2" />
               Create Bounty
-            </Button>
-            <Button 
-              variant="outline" 
-              className="w-full justify-start border-gray-600 text-white hover:bg-gray-700 hover:text-white bg-gray-800/60 shadow-[0_0_10px_rgba(59,130,246,0.4)] hover:shadow-[0_0_15px_rgba(59,130,246,0.6)] transition-all duration-300"
-            >
-              <TrendingUp className="h-4 w-4 mr-2" />
-              Analytics
             </Button>
           </div>
         </div>

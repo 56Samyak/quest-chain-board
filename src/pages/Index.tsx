@@ -7,7 +7,7 @@ import BountyCard from "@/components/BountyCard";
 import CreateBountyForm from "@/components/CreateBountyForm";
 import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
-import SetupInstructions from "@/components/SetupInstructions";
+import BountyHeroMessage from "@/components/BountyHeroMessage";
 import { Button } from "@/components/ui/button";
 import { useWeb3 } from "@/hooks/useWeb3";
 import { ContractService } from "@/services/contractService";
@@ -56,7 +56,7 @@ const Index = () => {
       setBounties(contractBounties);
     } catch (error) {
       console.error('Error loading bounties:', error);
-      setBounties([]); // Set empty array on error
+      setBounties([]);
     } finally {
       setLoading(false);
     }
@@ -100,8 +100,8 @@ const Index = () => {
             <HeroSection />
           </div>
 
-          <div className="fade-in mb-8">
-            <SetupInstructions />
+          <div className="fade-in">
+            <BountyHeroMessage />
           </div>
 
           {account && (
