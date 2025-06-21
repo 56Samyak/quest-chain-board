@@ -44,6 +44,18 @@ export const useWeb3 = () => {
     }
   };
 
+  const disconnectWallet = async () => {
+    try {
+      console.log('Disconnecting wallet...');
+      setAccount('');
+      setProvider(null);
+      setSigner(null);
+      console.log('Wallet disconnected successfully');
+    } catch (error) {
+      console.error('Error disconnecting wallet:', error);
+    }
+  };
+
   const checkConnection = async () => {
     if (window.ethereum) {
       try {
@@ -86,5 +98,5 @@ export const useWeb3 = () => {
     }
   }, []);
 
-  return { account, provider, signer, connectWallet, isConnecting };
+  return { account, provider, signer, connectWallet, disconnectWallet, isConnecting };
 };

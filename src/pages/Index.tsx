@@ -77,7 +77,7 @@ const Index = () => {
             <Button 
               variant="outline" 
               onClick={() => setShowCreateForm(false)}
-              className="mb-4 border-purple-500 text-white hover:bg-purple-600 hover:text-white bg-gray-800/60 shadow-[0_0_10px_rgba(147,51,234,0.4)]"
+              className="mb-4 border-purple-500/50 text-purple-300 hover:bg-purple-900/20 hover:text-purple-200 bg-gray-800/60 shadow-[0_0_12px_rgba(147,51,234,0.4)] hover:shadow-[0_0_18px_rgba(147,51,234,0.6)] transition-all duration-300"
             >
               ← Back to Dashboard
             </Button>
@@ -96,24 +96,30 @@ const Index = () => {
         <Navigation onCreateBounty={() => setShowCreateForm(true)} />
 
         <main className="flex-1 px-8 py-8">
-          <div className="fade-in">
-            <HeroSection />
-          </div>
-
-          <div className="fade-in">
-            <BountyHeroMessage />
-          </div>
-
-          {account && (
+          {!account ? (
             <>
+              <div className="fade-in">
+                <HeroSection />
+              </div>
+
+              <div className="fade-in">
+                <BountyHeroMessage />
+              </div>
+            </>
+          ) : (
+            <>
+              <div className="fade-in">
+                <BountyHeroMessage />
+              </div>
+
               <div className="fade-in mb-8">
                 <DashboardStats />
               </div>
 
               <div className="fade-in mb-8">
-                <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-2xl font-bold text-white drop-shadow-[0_0_8px_rgba(255,255,255,0.3)]">
-                    Active Bounties {loading && "(Loading...)"}
+                <div className="flex items-center justify-between mb-6">
+                  <h2 className="text-3xl font-bold bg-gradient-to-r from-white via-purple-200 to-blue-200 bg-clip-text text-transparent drop-shadow-[0_0_15px_rgba(255,255,255,0.3)]">
+                    Active Bounties {loading && <span className="text-purple-400 text-lg">(Loading...)</span>}
                   </h2>
                 </div>
                 <FilterBar />
@@ -121,8 +127,20 @@ const Index = () => {
 
               <div className="fade-in space-y-8">
                 {bounties.length === 0 && !loading ? (
-                  <div className="text-center py-12">
-                    <p className="text-gray-400 text-lg">No bounties found. Create the first one!</p>
+                  <div className="text-center py-16">
+                    <div className="max-w-md mx-auto">
+                      <div className="w-16 h-16 bg-gradient-to-r from-purple-600 to-blue-600 rounded-full flex items-center justify-center mx-auto mb-4 shadow-[0_0_20px_rgba(147,51,234,0.5)]">
+                        <Plus className="h-8 w-8 text-white" />
+                      </div>
+                      <h3 className="text-xl font-semibold text-white mb-2">No Bounties Yet</h3>
+                      <p className="text-gray-400 text-lg mb-6">Be the first to create a bounty and start earning!</p>
+                      <Button 
+                        onClick={() => setShowCreateForm(true)}
+                        className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white font-medium shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:shadow-[0_0_20px_rgba(147,51,234,0.8)] transition-all duration-300"
+                      >
+                        Create First Bounty
+                      </Button>
+                    </div>
                   </div>
                 ) : (
                   <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6">
@@ -152,7 +170,7 @@ const Index = () => {
                   size="lg" 
                   onClick={loadBounties}
                   disabled={loading}
-                  className="border-purple-500 text-white hover:bg-purple-600 hover:text-white bg-gray-800/60 px-8 shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:shadow-[0_0_20px_rgba(147,51,234,0.8)]"
+                  className="border-purple-500/50 text-purple-300 hover:bg-purple-900/20 hover:text-purple-200 bg-gray-800/60 px-8 shadow-[0_0_15px_rgba(147,51,234,0.5)] hover:shadow-[0_0_20px_rgba(147,51,234,0.8)] transition-all duration-300"
                 >
                   {loading ? "Loading..." : "Refresh Bounties"}
                 </Button>
