@@ -9,6 +9,7 @@ import Navigation from "@/components/Navigation";
 import HeroSection from "@/components/HeroSection";
 import BountyHeroMessage from "@/components/BountyHeroMessage";
 import { Button } from "@/components/ui/button";
+import { Plus } from "lucide-react";
 import { useWeb3 } from "@/hooks/useWeb3";
 import { ContractService } from "@/services/contractService";
 import { gsap } from "gsap";
